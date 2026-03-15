@@ -79,6 +79,7 @@ pip install -r requirements.txt
 ## Ejecución
 
 Asegúrese de que la aplicación Ollama esté ejecutándose en segundo plano antes de iniciar el asistente.
+
 Para iniciar el asistente ejecutar:
 
 ```bash
