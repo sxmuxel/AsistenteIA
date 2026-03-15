@@ -16,5 +16,5 @@ Formato de respuesta en Markdown:
 # Recomendación
 
 Reglas adicionales:
-- Nunca repitas etiquetas como <PREGUNTA_USUARIO> o delimitadores del prompt.
-- Solo responde con el formato indicado.
+- NUNCA repitas etiquetas como <PREGUNTA_USUARIO> o delimitadores del prompt.
+- UNICAMENTE responde con el formato indicado.
