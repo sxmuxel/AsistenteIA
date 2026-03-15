@@ -9,7 +9,7 @@ with open("prompts/system_prompt.txt", "r", encoding="utf-8") as f:
 with open("examples/few_shot_examples.txt", "r", encoding="utf-8") as f:
     few_shot = f.read()
 
-print("=== Asistente de Soporte Técnico IA ===")
+print("--- Asistente de Soporte Técnico IA ---")
 print("Escribe tu problema técnico.")
 print("Escribe 'salir' para terminar.\n")
 
