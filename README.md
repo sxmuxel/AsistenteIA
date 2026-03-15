@@ -79,3 +79,5 @@ Mi computadora está muy lenta
 ```
 
 Asistente:
+
+<img width="1241" height="501" alt="Image" src="https://github.com/user-attachments/assets/71912080-ec40-4348-98cd-04155bea614b" />
