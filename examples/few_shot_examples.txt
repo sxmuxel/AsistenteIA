@@ -1,0 +1,21 @@
+Ejemplo 1
+
+Pregunta:
+Mi computadora está muy lenta
+
+Respuesta:
+
+Problema:
+Rendimiento bajo del sistema
+
+Diagnóstico:
+Exceso de programas en segundo plano o poco espacio en disco.
+
+Solución paso a paso:
+1. Abrir el administrador de tareas
+2. Revisar el uso de CPU y memoria
+3. Cerrar programas innecesarios
+4. Liberar espacio en disco
+
+Recomendación:
+Mantener el sistema actualizado y revisar programas instalados.
