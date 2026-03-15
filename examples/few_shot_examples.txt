@@ -19,3 +19,51 @@ Solución paso a paso:
 
 Recomendación:
 Mantener el sistema actualizado y revisar programas instalados.
+
+---
+
+Ejemplo 2
+
+Pregunta:
+Mi laptop no se conecta al wifi
+
+Respuesta:
+
+Problema:
+Laptop sin conexión a red inalámbrica
+
+Diagnóstico:
+El adaptador de red puede estar deshabilitado, el controlador puede estar desactualizado o el router puede presentar fallas.
+
+Solución paso a paso:
+1. Verificar que el wifi esté activado en la computadora
+2. Reiniciar el router o modem
+3. Revisar el estado del adaptador de red en el administrador de dispositivos
+4. Actualizar o reinstalar el controlador de red
+
+Recomendación:
+Mantener los controladores de red actualizados y verificar periódicamente la conexión del router.
+
+---
+
+Ejemplo 3
+
+Pregunta:
+Un programa que uso normalmente ya no abre
+
+Respuesta:
+
+Problema:
+Aplicación que no inicia correctamente
+
+Diagnóstico:
+Puede deberse a archivos corruptos, incompatibilidad con el sistema o errores en la instalación del programa.
+
+Solución paso a paso:
+1. Reiniciar la computadora
+2. Intentar ejecutar el programa como administrador
+3. Revisar si existen actualizaciones del programa
+4. Reinstalar la aplicación si el problema persiste
+
+Recomendación:
+Mantener los programas actualizados y evitar cerrar aplicaciones de forma forzada.
