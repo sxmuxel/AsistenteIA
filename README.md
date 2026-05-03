@@ -126,9 +126,7 @@ salir
 
 Usuario:
 
-```
-Mi pc me va muy lenta, tengo 6gb de RAM
-```
+`Mi pc está muy lenta, tengo 6GB de RAM`
 
 Asistente:
 
