@@ -1,69 +1,60 @@
-Ejemplo 1
+A continuación se presentan ejemplos del formato de respuesta esperado:
 
-Pregunta:
-Mi computadora está muy lenta
+=== EJEMPLO 1 ===
+<PREGUNTA_USUARIO>
+Mi computadora está muy lenta y el disco aparece al 100% en el administrador de tareas.
+</PREGUNTA_USUARIO>
 
-Respuesta:
+<RESPUESTA_ESPERADA>
+# 🔍 Problema Identificado
+Rendimiento bajo del sistema por uso excesivo del disco
 
-Problema:
-Rendimiento bajo del sistema
+# 📋 Diagnóstico
+El disco al 100% puede ser causado por procesos como Windows Update, Windows Search indexando archivos, el antivirus realizando un escaneo, o el servicio SysMain/Superfetch. En discos HDD este problema es más frecuente que en SSD.
 
-Diagnóstico:
-Exceso de programas en segundo plano o poco espacio en disco.
+# 🛠️ Solución Paso a Paso
+1. Abrir el Administrador de Tareas (Ctrl + Shift + Esc).
+2. Ir a la pestaña "Procesos" y ordenar por la columna "Disco" de mayor a menor.
+3. Identificar qué proceso está usando más el disco.
+4. Si es "SysMain": abrir services.msc, buscar "SysMain", cambiar tipo de inicio a "Deshabilitado" y detener el servicio.
+5. Reiniciar el equipo y verificar si el problema persiste.
 
-Solución paso a paso:
-1. Abrir el administrador de tareas
-2. Revisar el uso de CPU y memoria
-3. Cerrar programas innecesarios
-4. Liberar espacio en disco
+# ⚠️ Recomendaciones
+Mantener mínimo 15% de espacio libre en el disco C: y reiniciar el equipo al menos una vez por semana.
 
-Recomendación:
-Mantener el sistema actualizado y revisar programas instalados.
+# 📚 Fuente
+Manual de Rendimiento del Sistema Windows - Sección 1: Diagnóstico de lentitud
+</RESPUESTA_ESPERADA>
 
----
+=== EJEMPLO 2 ===
+<PREGUNTA_USUARIO>
+Mi laptop no se conecta al wifi. El ícono muestra que está conectado pero no hay internet.
+</PREGUNTA_USUARIO>
 
-Ejemplo 2
+<RESPUESTA_ESPERADA>
+# 🔍 Problema Identificado
+Conexión Wi-Fi sin acceso a Internet
 
-Pregunta:
-Mi laptop no se conecta al wifi
+# 📋 Diagnóstico
+El equipo puede estar conectado al router pero sin obtener una dirección IP válida, o puede haber un problema con los servidores DNS que impide resolver nombres de dominio. También puede ser un problema temporal del router.
 
-Respuesta:
+# 🛠️ Solución Paso a Paso
+1. Abrir CMD como administrador.
+2. Ejecutar: ping 8.8.8.8
+   - Si responde: el problema es de DNS, no de conectividad.
+   - Si no responde: ejecutar ipconfig para verificar la dirección IP.
+3. Ejecutar los siguientes comandos para restablecer la red:
+   netsh winsock reset
+   netsh int ip reset
+   ipconfig /release
+   ipconfig /flushdns
+   ipconfig /renew
+4. Reiniciar el equipo.
+5. Si persiste: cambiar DNS a 8.8.8.8 (Google) en la configuración del adaptador de red.
 
-Problema:
-Laptop sin conexión a red inalámbrica
+# ⚠️ Recomendaciones
+Reiniciar el router apagándolo 30 segundos puede resolver problemas temporales. Mantener los controladores de red actualizados.
 
-Diagnóstico:
-El adaptador de red puede estar deshabilitado, el controlador puede estar desactualizado o el router puede presentar fallas.
-
-Solución paso a paso:
-1. Verificar que el wifi esté activado en la computadora
-2. Reiniciar el router o modem
-3. Revisar el estado del adaptador de red en el administrador de dispositivos
-4. Actualizar o reinstalar el controlador de red
-
-Recomendación:
-Mantener los controladores de red actualizados y verificar periódicamente la conexión del router.
-
----
-
-Ejemplo 3
-
-Pregunta:
-Un programa que uso normalmente ya no abre
-
-Respuesta:
-
-Problema:
-Aplicación que no inicia correctamente
-
-Diagnóstico:
-Puede deberse a archivos corruptos, incompatibilidad con el sistema o errores en la instalación del programa.
-
-Solución paso a paso:
-1. Reiniciar la computadora
-2. Intentar ejecutar el programa como administrador
-3. Revisar si existen actualizaciones del programa
-4. Reinstalar la aplicación si el problema persiste
-
-Recomendación:
-Mantener los programas actualizados y evitar cerrar aplicaciones de forma forzada.
+# 📚 Fuente
+Manual de Redes e Internet - Sección 1: Diagnóstico de conexión a Internet
+</RESPUESTA_ESPERADA>
