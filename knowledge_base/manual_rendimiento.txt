@@ -1,0 +1,118 @@
+MANUAL DE SOPORTE TÉCNICO - RENDIMIENTO DEL SISTEMA WINDOWS
+Versión 1.0 | Categoría: Rendimiento y Optimización
+
+=============================================================
+SECCIÓN 1: DIAGNÓSTICO DE LENTITUD DEL SISTEMA
+=============================================================
+
+SÍNTOMAS COMUNES:
+- El equipo tarda más de 3 minutos en iniciar Windows.
+- Las aplicaciones demoran en abrirse o responden lentamente.
+- El sistema se congela o muestra el cursor girando constantemente.
+- La batería se descarga más rápido de lo normal (laptops).
+
+CAUSAS MÁS FRECUENTES:
+1. Exceso de programas al inicio de Windows (startup).
+2. Uso elevado de CPU o RAM por procesos en segundo plano.
+3. Disco duro con poco espacio libre (menos del 10% disponible).
+4. Disco duro con sectores dañados o en proceso de falla.
+5. Malware o software no deseado consumiendo recursos.
+6. Controladores (drivers) desactualizados o corruptos.
+7. Windows Update pendiente de instalación o atascado.
+8. RAM insuficiente para las tareas realizadas.
+9. Temperatura excesiva del procesador (thermal throttling).
+10. Fragmentación del disco duro (solo aplica para HDD, no SSD).
+
+HERRAMIENTA: ADMINISTRADOR DE TAREAS
+Acceso: Ctrl + Shift + Esc o clic derecho en la barra de tareas.
+Pestañas útiles:
+- Procesos: muestra CPU, Memoria, Disco, Red en uso por proceso.
+- Rendimiento: gráficas en tiempo real de CPU, RAM, Disco, GPU.
+- Inicio: lista de programas que se ejecutan al encender el PC.
+- Usuarios: procesos por cuenta de usuario.
+
+DIAGNÓSTICO PASO A PASO:
+1. Abrir el Administrador de Tareas.
+2. Ir a la pestaña "Rendimiento".
+3. Si la CPU está al 80-100% constantemente → revisar pestaña "Procesos".
+4. Si la Memoria está al 90%+ → el equipo necesita más RAM o cerrar apps.
+5. Si el Disco está al 100% constantemente → posible falla de HDD o Windows Update.
+6. Ordenar la columna "CPU" o "Memoria" de mayor a menor para identificar procesos problemáticos.
+
+SOLUCIÓN: OPTIMIZACIÓN DE INICIO
+1. Abrir Administrador de Tareas → pestaña "Inicio".
+2. Identificar programas con impacto "Alto" que no sean necesarios.
+3. Clic derecho sobre el programa → "Deshabilitar".
+4. Reiniciar el equipo para aplicar cambios.
+5. Programas que se pueden deshabilitar con seguridad: Spotify, Teams, Discord, OneDrive (si no se usa), Adobe Updater.
+6. Programas que NO se deben deshabilitar: antivirus, drivers de teclado/mouse, herramientas del fabricante del equipo.
+
+SOLUCIÓN: LIBERACIÓN DE ESPACIO EN DISCO
+1. Abrir el menú Inicio → buscar "Liberador de espacio en disco".
+2. Seleccionar la unidad C: → Aceptar.
+3. Marcar: Archivos temporales, Miniaturas, Archivos de Internet, Papelera de reciclaje.
+4. Hacer clic en "Limpiar archivos del sistema" para opciones adicionales.
+5. Se puede eliminar también: Actualizaciones anteriores de Windows (puede liberar varios GB).
+6. Alternativa avanzada: usar el comando en CMD → cleanmgr /sageset:1 && cleanmgr /sagerun:1
+
+SOLUCIÓN: DESFRAGMENTACIÓN Y OPTIMIZACIÓN DE DISCO
+Nota: Solo aplicar en discos HDD. Los SSD se optimizan de forma diferente (TRIM).
+1. Abrir el menú Inicio → buscar "Desfragmentar y optimizar unidades".
+2. Seleccionar la unidad C:.
+3. Hacer clic en "Optimizar".
+4. Para HDD: ejecutar mensualmente.
+5. Para SSD: Windows ejecuta TRIM automáticamente, no es necesario desfragmentar.
+
+SOLUCIÓN: AJUSTE DE EFECTOS VISUALES
+1. Clic derecho en "Este equipo" → Propiedades.
+2. Ir a "Configuración avanzada del sistema".
+3. Pestaña "Opciones avanzadas" → botón "Configuración" en Rendimiento.
+4. Seleccionar "Ajustar para obtener el mejor rendimiento" o personalizar.
+5. Esto desactiva animaciones y transparencias que consumen recursos.
+
+RECOMENDACIONES GENERALES:
+- Mantener mínimo 15% de espacio libre en el disco C:.
+- Reiniciar el equipo al menos una vez por semana.
+- Instalar las actualizaciones de Windows cuando estén disponibles.
+- Usar un solo antivirus activo al mismo tiempo.
+- Asegurarse de que el equipo tenga buena ventilación para evitar sobrecalentamiento.
+
+=============================================================
+SECCIÓN 2: PROBLEMAS CON WINDOWS UPDATE
+=============================================================
+
+SÍNTOMAS:
+- Las actualizaciones se quedan atascadas en un porcentaje.
+- El error "0x80080005" o "0x800f081f" aparece al actualizar.
+- Windows Update no encuentra actualizaciones.
+- El sistema reinicia repetidamente durante la actualización.
+
+SOLUCIÓN: REINICIAR EL SERVICIO DE WINDOWS UPDATE
+1. Presionar Windows + R → escribir "services.msc" → Enter.
+2. Buscar "Windows Update" en la lista.
+3. Clic derecho → Detener.
+4. Esperar 30 segundos.
+5. Clic derecho → Iniciar.
+6. Volver a intentar Windows Update.
+
+SOLUCIÓN: LIMPIAR LA CACHÉ DE WINDOWS UPDATE
+1. Abrir CMD como administrador.
+2. Ejecutar los siguientes comandos en orden:
+   net stop wuauserv
+   net stop cryptSvc
+   net stop bits
+   net stop msiserver
+   ren C:\Windows\SoftwareDistribution SoftwareDistribution.old
+   ren C:\Windows\System32\catroot2 catroot2.old
+   net start wuauserv
+   net start cryptSvc
+   net start bits
+   net start msiserver
+3. Reiniciar el equipo.
+4. Intentar Windows Update nuevamente.
+
+HERRAMIENTA: SOLUCIONADOR DE PROBLEMAS DE WINDOWS UPDATE
+1. Ir a Configuración (Windows + I) → Sistema → Solucionar problemas.
+2. Seleccionar "Otros solucionadores de problemas".
+3. Buscar "Windows Update" → Ejecutar.
+4. Seguir las instrucciones del asistente.

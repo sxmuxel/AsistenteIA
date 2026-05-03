@@ -1,0 +1,147 @@
+MANUAL DE SOPORTE TÉCNICO - PROBLEMAS DE HARDWARE WINDOWS
+Versión 1.0 | Categoría: Hardware y Dispositivos
+
+=============================================================
+SECCIÓN 1: PROBLEMAS CON EL DISCO DURO Y ALMACENAMIENTO
+=============================================================
+
+SÍNTOMAS COMUNES:
+- El equipo tarda mucho en iniciar o el disco aparece al 100% en el Administrador de Tareas.
+- Aparecen errores de "Disco no encontrado" o "El dispositivo no está listo".
+- Se escuchan sonidos de clic o golpeteo en el disco duro (HDD).
+- Archivos que desaparecen o se corrompen solos.
+- El explorador de archivos tarda mucho en abrir carpetas.
+- Aparece el error "SMART failure predicted on hard disk" al iniciar el equipo.
+
+HERRAMIENTA: VERIFICAR EL ESTADO DEL DISCO (CHKDSK)
+1. Abrir CMD como administrador.
+2. Ejecutar: chkdsk C: /f /r /x
+   - /f: corrige errores en el disco.
+   - /r: localiza sectores dañados y recupera información legible.
+   - /x: desmonta el volumen si es necesario.
+3. El sistema pedirá programar la verificación al siguiente reinicio → escribir "S" → Enter.
+4. Reiniciar el equipo. El proceso puede tomar 1-2 horas.
+
+HERRAMIENTA: VER ESTADO SMART DEL DISCO
+1. Abrir CMD como administrador.
+2. Ejecutar: wmic diskdrive get model,status
+3. Si aparece "OK" → el disco está funcionando correctamente.
+4. Si aparece "Pred Fail" o "Unknown" → el disco puede estar fallando pronto.
+5. Para análisis detallado, usar CrystalDiskInfo (herramienta gratuita).
+
+DIAGNÓSTICO: DISCO AL 100% EN ADMINISTRADOR DE TAREAS
+1. Abrir Administrador de Tareas → pestaña Procesos.
+2. Ordenar por columna "Disco" de mayor a menor.
+3. Procesos comunes que causan esto:
+   - Windows Search: indexando archivos (normal al inicio, se estabiliza).
+   - Windows Update: descargando o instalando actualizaciones.
+   - Antivirus: realizando un escaneo.
+   - Superfetch / SysMain: precargando datos (puede deshabilitarse en HDD lentos).
+4. Para deshabilitar SysMain: services.msc → buscar "SysMain" → doble clic → Tipo de inicio: Deshabilitado → Detener → Aceptar.
+
+SOLUCIÓN: EXPANDIR EL ESPACIO EN DISCO
+1. Presionar Windows + R → escribir "diskmgmt.msc" → Enter.
+2. Se abre el Administrador de discos.
+3. Si hay espacio no asignado junto a la partición C: → clic derecho en C: → "Extender volumen".
+4. Si no hay espacio libre, considerar:
+   - Eliminar particiones de recuperación si no son necesarias (con precaución).
+   - Agregar un disco externo o SSD adicional.
+   - Mover archivos grandes a otra unidad.
+
+=============================================================
+SECCIÓN 2: PROBLEMAS CON LA MEMORIA RAM
+=============================================================
+
+SÍNTOMAS:
+- El sistema se cuelga o reinicia aleatoriamente sin BSOD.
+- Programas se cierran solos con errores de memoria.
+- El equipo muestra menos RAM de la instalada en las propiedades del sistema.
+- Errores de "memoria insuficiente" aunque haya poca carga.
+- Rendimiento muy lento aunque haya pocos programas abiertos.
+
+VERIFICAR LA RAM INSTALADA:
+1. Presionar Windows + Pause/Break → ver cantidad de RAM instalada.
+2. Abrir CMD → ejecutar: wmic memorychip get capacity,speed,manufacturer
+3. Este comando muestra los módulos de RAM instalados y su capacidad.
+
+PRUEBA DE MEMORIA RAM:
+1. Presionar Windows + R → escribir "mdsched" → Enter.
+2. Seleccionar "Reiniciar ahora y comprobar si hay problemas".
+3. El sistema arrancará en modo diagnóstico (tarda entre 15 y 60 minutos).
+4. Al finalizar, Windows mostrará los resultados en el Centro de actividades.
+5. Alternativa más completa: usar MemTest86 (arranque desde USB, prueba más exhaustiva).
+
+RAM NO RECONOCIDA:
+1. Apagar el equipo completamente y desconectar de la corriente.
+2. Quitar y volver a colocar los módulos de RAM (limpiar los contactos con un borrador de lápiz con cuidado).
+3. Probar con un solo módulo a la vez para identificar cuál puede estar fallando.
+4. Verificar que los módulos sean compatibles con la placa madre (frecuencia, tipo DDR).
+5. Verificar en la BIOS/UEFI si la memoria está siendo reconocida correctamente.
+
+=============================================================
+SECCIÓN 3: PROBLEMAS DE TEMPERATURA Y VENTILACIÓN
+=============================================================
+
+SÍNTOMAS:
+- El equipo se apaga solo después de un tiempo de uso.
+- El ventilador hace ruido excesivo o funciona a máxima velocidad constantemente.
+- El rendimiento baja notablemente al estar mucho tiempo encendido (thermal throttling).
+- La parte inferior de la laptop está muy caliente.
+
+VERIFICAR TEMPERATURA:
+1. Instalar HWMonitor o HWiNFO64 (herramientas gratuitas) para ver temperaturas en tiempo real.
+2. Temperaturas normales de CPU en reposo: 35-50°C.
+3. Temperaturas normales de CPU bajo carga: 65-85°C.
+4. Si supera los 90°C de forma constante → hay un problema de refrigeración.
+
+SOLUCIÓN: LIMPIEZA DE POLVO
+1. Apagar el equipo y desconectar de la corriente.
+2. Para laptops: usar aire comprimido por las rejillas de ventilación.
+3. Para equipos de escritorio: abrir el gabinete y limpiar con aire comprimido.
+4. Prestar especial atención a los disipadores del CPU y GPU.
+5. Recomendado hacerlo cada 6-12 meses dependiendo del entorno.
+
+SOLUCIÓN: CONFIGURACIÓN DEL PLAN DE ENERGÍA (LAPTOPS)
+1. Ir a Configuración → Sistema → Energía y suspensión → Configuración adicional de energía.
+2. Seleccionar el plan de energía "Equilibrado" en lugar de "Alto rendimiento".
+3. En laptops, el plan "Alto rendimiento" puede generar más calor.
+4. Ir a "Cambiar configuración del plan" → "Cambiar configuración de energía avanzada".
+5. Expandir "Administración de energía del procesador":
+   - "Estado máximo del procesador": reducir al 80% si hay problemas de calor.
+   - Esto limita el uso máximo de CPU para reducir la temperatura.
+
+=============================================================
+SECCIÓN 4: PROBLEMAS CON DISPOSITIVOS USB
+=============================================================
+
+SÍNTOMAS:
+- El dispositivo USB no es reconocido al conectarlo.
+- Aparece el error "Dispositivo USB no reconocido".
+- El dispositivo aparece brevemente y luego desaparece.
+- La unidad USB no aparece en el explorador de archivos.
+
+SOLUCIÓN: REPARAR USB NO RECONOCIDO
+1. Intentar conectar el USB en otro puerto del equipo.
+2. Reiniciar el equipo con el USB conectado.
+3. Abrir Administrador de dispositivos → Ver → Mostrar dispositivos ocultos.
+4. Buscar dispositivos con error en "Controladores de bus serie universal (USB)".
+5. Clic derecho en cada uno → Desinstalar dispositivo.
+6. Reiniciar el equipo (Windows reinstalará los drivers automáticamente).
+
+SOLUCIÓN: GESTIÓN DE ENERGÍA USB
+1. En el Administrador de dispositivos → "Controladores de bus serie universal".
+2. Clic derecho en "Concentrador USB raíz" → Propiedades.
+3. Pestaña "Administración de energía".
+4. Desmarcar "Permitir que el equipo apague este dispositivo para ahorrar energía".
+5. Repetir para todos los concentradores USB raíz.
+6. Reiniciar el equipo.
+
+SOLUCIÓN: RECUPERAR DATOS DE USB CON ERRORES
+1. Conectar el USB y anotar la letra de unidad asignada (ej: E:).
+2. Abrir CMD como administrador.
+3. Ejecutar: chkdsk E: /f
+4. Si pide desmontar → escribir "S".
+5. Si la unidad no aparece en el explorador pero sí en Administración de discos:
+   - Abrir diskmgmt.msc.
+   - Clic derecho en el volumen USB → Cambiar la letra y rutas de acceso → Agregar.
+   - Asignar una letra de unidad disponible.

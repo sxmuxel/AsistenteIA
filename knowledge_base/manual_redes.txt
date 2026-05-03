@@ -1,0 +1,121 @@
+MANUAL DE SOPORTE TÉCNICO - PROBLEMAS DE RED Y CONECTIVIDAD WINDOWS
+Versión 1.0 | Categoría: Redes e Internet
+
+=============================================================
+SECCIÓN 1: DIAGNÓSTICO DE CONEXIÓN A INTERNET
+=============================================================
+
+SÍNTOMAS COMUNES:
+- No hay acceso a Internet aunque el ícono de red muestre conexión.
+- Aparece el mensaje "Sin acceso a Internet" o triángulo amarillo en el ícono de red.
+- Páginas web no cargan pero otras aplicaciones sí funcionan.
+- La conexión se cae intermitentemente.
+- Velocidad de Internet muy baja respecto a lo contratado.
+
+DIAGNÓSTICO INICIAL - COMANDOS ÚTILES (CMD como administrador):
+- ping 8.8.8.8           → Prueba conectividad básica a Internet (DNS de Google).
+- ping google.com        → Prueba si el DNS está resolviendo nombres.
+- ipconfig               → Muestra la configuración de red actual.
+- ipconfig /all          → Muestra configuración detallada incluyendo MAC e IP.
+- tracert google.com     → Muestra la ruta de red hasta un servidor.
+- netstat -an            → Muestra conexiones activas y puertos en uso.
+
+INTERPRETACIÓN DE RESULTADOS:
+- Si "ping 8.8.8.8" funciona pero "ping google.com" falla → problema de DNS.
+- Si ambos pings fallan → problema de conectividad a nivel de red.
+- Si la IP comienza con 169.254.x.x → el equipo no obtuvo IP del router (problema DHCP).
+- Si la IP es 192.168.x.x o 10.x.x.x → el equipo tiene IP local correcta.
+
+SOLUCIÓN: RESTABLECER LA CONFIGURACIÓN DE RED
+1. Abrir CMD como administrador.
+2. Ejecutar en orden:
+   netsh winsock reset
+   netsh int ip reset
+   ipconfig /release
+   ipconfig /flushdns
+   ipconfig /renew
+3. Reiniciar el equipo.
+
+SOLUCIÓN: CAMBIAR LOS SERVIDORES DNS
+1. Abrir Panel de Control → Redes e Internet → Centro de redes y recursos compartidos.
+2. Clic en el nombre de la conexión activa (Ethernet o Wi-Fi).
+3. Propiedades → Protocolo de Internet versión 4 (TCP/IPv4) → Propiedades.
+4. Seleccionar "Usar las siguientes direcciones de servidor DNS".
+5. DNS preferido: 8.8.8.8 (Google) o 1.1.1.1 (Cloudflare).
+6. DNS alternativo: 8.8.4.4 (Google) o 1.0.0.1 (Cloudflare).
+7. Aceptar y probar la conexión.
+
+=============================================================
+SECCIÓN 2: PROBLEMAS CON WI-FI
+=============================================================
+
+SÍNTOMAS:
+- El equipo no detecta redes Wi-Fi disponibles.
+- La laptop muestra "Wi-Fi desactivado" o no tiene el adaptador.
+- Conexión Wi-Fi inestable o se desconecta sola.
+- No puede conectarse a una red específica aunque la contraseña sea correcta.
+- El Wi-Fi aparece conectado pero sin Internet.
+
+SOLUCIÓN: VERIFICAR QUE EL ADAPTADOR WI-FI ESTÉ HABILITADO
+1. Presionar Windows + R → escribir "devmgmt.msc" → Enter (Administrador de dispositivos).
+2. Expandir "Adaptadores de red".
+3. Buscar el adaptador Wi-Fi (puede llamarse Intel Wireless, Realtek, Broadcom, etc.).
+4. Si tiene una flecha apuntando hacia abajo → está deshabilitado → clic derecho → Habilitar dispositivo.
+5. Si tiene una X o un signo de exclamación → el driver puede estar corrupto.
+
+SOLUCIÓN: ACTUALIZAR O REINSTALAR EL DRIVER DE RED
+1. En el Administrador de dispositivos → clic derecho en el adaptador Wi-Fi.
+2. Seleccionar "Actualizar controlador".
+3. Elegir "Buscar controladores automáticamente".
+4. Si no encuentra actualizaciones, ir al sitio web del fabricante del equipo (Dell, HP, Lenovo, Asus, etc.).
+5. Descargar el driver Wi-Fi específico para el modelo del equipo.
+6. Instalar y reiniciar.
+
+SOLUCIÓN: OLVIDAR Y RECONECTAR A LA RED WI-FI
+1. Ir a Configuración (Windows + I) → Red e Internet → Wi-Fi.
+2. Hacer clic en "Administrar redes conocidas".
+3. Seleccionar la red problemática → "Olvidar".
+4. Volver a conectarse ingresando la contraseña nuevamente.
+
+SOLUCIÓN: RESTABLECER EL ADAPTADOR DE RED
+1. Abrir CMD como administrador.
+2. Ejecutar: netsh wlan delete profile name="NombreDeTuRed"
+3. Reiniciar el adaptador: devmgmt.msc → clic derecho en adaptador → Deshabilitar → Habilitar.
+4. Alternativa: Configuración → Red e Internet → Restablecimiento de red (al final de la página).
+   ADVERTENCIA: Esto elimina todas las configuraciones de red guardadas.
+
+SOLUCIÓN: VERIFICAR EL ROUTER
+1. Reiniciar el router: apagar, esperar 30 segundos, encender.
+2. Verificar que el canal Wi-Fi no esté saturado (muchos dispositivos conectados).
+3. En la interfaz del router (192.168.1.1 o 192.168.0.1 en el navegador):
+   - Cambiar el canal de Wi-Fi (probar canal 1, 6 o 11 para 2.4GHz).
+   - Verificar que la banda de 5GHz esté habilitada si el equipo la soporta.
+4. Actualizar el firmware del router.
+
+DIAGNÓSTICO: VELOCIDAD DE INTERNET
+1. Conectar el equipo por cable Ethernet directamente al router.
+2. Ir a https://www.speedtest.net y ejecutar la prueba.
+3. Si la velocidad es correcta por cable pero baja por Wi-Fi → problema de señal o interferencias.
+4. Si la velocidad es baja tanto por cable como por Wi-Fi → contactar al proveedor de Internet (ISP).
+
+=============================================================
+SECCIÓN 3: PROBLEMAS DE BLUETOOTH
+=============================================================
+
+SÍNTOMAS:
+- El Bluetooth no aparece en la configuración de Windows.
+- No puede emparejar dispositivos Bluetooth.
+- El dispositivo emparejado no conecta automáticamente.
+
+SOLUCIÓN: ACTIVAR BLUETOOTH
+1. Ir a Configuración → Bluetooth y dispositivos.
+2. Activar el interruptor de Bluetooth.
+3. Si no aparece el interruptor → el equipo puede no tener Bluetooth o el driver no está instalado.
+
+SOLUCIÓN: SOLUCIONAR PROBLEMAS DE EMPAREJAMIENTO
+1. En Configuración → Bluetooth → seleccionar el dispositivo con problemas → "Quitar dispositivo".
+2. En el dispositivo Bluetooth, reiniciar el modo de emparejamiento.
+3. Volver a emparejar desde Windows.
+4. Si no funciona: CMD como administrador → ejecutar:
+   Get-PnpDevice -Class Bluetooth | Disable-PnpDevice -Confirm:$false
+   Get-PnpDevice -Class Bluetooth | Enable-PnpDevice -Confirm:$false

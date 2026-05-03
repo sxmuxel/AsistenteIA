@@ -1,0 +1,164 @@
+MANUAL DE SOPORTE TÉCNICO - ERRORES DE SOFTWARE Y APLICACIONES WINDOWS
+Versión 1.0 | Categoría: Software y Aplicaciones
+
+=============================================================
+SECCIÓN 1: APLICACIONES QUE NO ABREN O SE CIERRAN SOLAS
+=============================================================
+
+SÍNTOMAS COMUNES:
+- Un programa se abre y se cierra inmediatamente sin mensaje de error.
+- Aparece el mensaje "La aplicación ha dejado de funcionar".
+- El ícono del programa aparece en la barra de tareas pero la ventana no se muestra.
+- El programa muestra errores como "DLL no encontrada" o "Runtime Error".
+- La aplicación queda colgada (no responde) y no se puede cerrar.
+
+CAUSAS FRECUENTES:
+1. Archivos de la aplicación corruptos o incompletos.
+2. Falta de permisos de administrador para ejecutar la aplicación.
+3. Incompatibilidad con la versión actual de Windows.
+4. Archivos de Visual C++ Redistributable o .NET Framework faltantes o corruptos.
+5. Conflicto con el antivirus que bloquea la aplicación.
+6. Perfil de usuario de Windows corrupto.
+7. Registro de Windows dañado relacionado con la aplicación.
+
+SOLUCIÓN: EJECUTAR COMO ADMINISTRADOR
+1. Clic derecho sobre el ícono del programa.
+2. Seleccionar "Ejecutar como administrador".
+3. Si funciona así, configurar para que siempre abra como administrador:
+   - Clic derecho → Propiedades → Compatibilidad.
+   - Marcar "Ejecutar este programa como administrador" → Aceptar.
+
+SOLUCIÓN: REINSTALAR LA APLICACIÓN
+1. Ir a Configuración (Windows + I) → Aplicaciones → Aplicaciones instaladas.
+2. Buscar la aplicación problemática.
+3. Clic en los tres puntos → Desinstalar.
+4. Reiniciar el equipo.
+5. Descargar la versión más reciente del sitio oficial del programa.
+6. Instalar nuevamente.
+
+SOLUCIÓN: MODO DE COMPATIBILIDAD
+1. Clic derecho sobre el ejecutable del programa → Propiedades.
+2. Pestaña "Compatibilidad".
+3. Marcar "Ejecutar este programa en modo de compatibilidad para:".
+4. Seleccionar una versión anterior de Windows (ej: Windows 8, Windows 7).
+5. Aceptar e intentar abrir el programa.
+
+SOLUCIÓN: REPARAR VISUAL C++ REDISTRIBUTABLE Y .NET FRAMEWORK
+1. Abrir Configuración → Aplicaciones → Aplicaciones instaladas.
+2. Buscar todas las entradas de "Microsoft Visual C++ Redistributable".
+3. Clic en cada una → Modificar → Reparar.
+4. Para .NET Framework: abrir CMD como administrador y ejecutar:
+   DISM /Online /Cleanup-Image /RestoreHealth
+   sfc /scannow
+5. Reiniciar el equipo.
+
+FORZAR CIERRE DE APLICACIÓN COLGADA:
+1. Método 1: Ctrl + Shift + Esc → seleccionar la app → "Finalizar tarea".
+2. Método 2: CMD como administrador:
+   tasklist                          → Lista todos los procesos
+   taskkill /IM nombre_app.exe /F    → Cierra forzosamente el proceso
+3. Método 3: PowerShell:
+   Get-Process -Name "nombre_app" | Stop-Process -Force
+
+=============================================================
+SECCIÓN 2: PANTALLA AZUL DE LA MUERTE (BSOD)
+=============================================================
+
+SÍNTOMAS:
+- El sistema muestra una pantalla azul con un código de error y reinicia.
+- El error ocurre al iniciar Windows, al usar un programa específico o aleatoriamente.
+- Códigos de error comunes: SYSTEM_THREAD_EXCEPTION_NOT_HANDLED, 
+  IRQL_NOT_LESS_OR_EQUAL, MEMORY_MANAGEMENT, CRITICAL_PROCESS_DIED,
+  KERNEL_SECURITY_CHECK_FAILURE, DPC_WATCHDOG_VIOLATION.
+
+DIAGNÓSTICO - VER HISTORIAL DE PANTALLAS AZULES:
+1. Presionar Windows + R → escribir "eventvwr" → Enter (Visor de eventos).
+2. Ir a Registros de Windows → Sistema.
+3. Buscar eventos de nivel "Error" o "Crítico" en el momento del BSOD.
+4. Alternativamente, usar la herramienta WhoCrashed (gratuita) para analizar los archivos de volcado.
+
+SOLUCIÓN: VERIFICAR DRIVERS RECIÉN INSTALADOS
+1. Si el BSOD comenzó después de instalar un driver o programa, desinstalar ese driver.
+2. Ir al Administrador de dispositivos → buscar dispositivos con actualización reciente.
+3. Clic derecho → Propiedades → pestaña "Controlador" → "Revertir al controlador anterior".
+
+SOLUCIÓN: VERIFICAR INTEGRIDAD DE ARCHIVOS DEL SISTEMA
+1. Abrir CMD como administrador.
+2. Ejecutar: sfc /scannow
+3. Esperar que termine (puede tomar 15-30 minutos).
+4. Si encuentra errores, ejecutar también:
+   DISM /Online /Cleanup-Image /CheckHealth
+   DISM /Online /Cleanup-Image /ScanHealth
+   DISM /Online /Cleanup-Image /RestoreHealth
+5. Reiniciar el equipo.
+
+SOLUCIÓN: VERIFICAR LA MEMORIA RAM
+1. Presionar Windows + R → escribir "mdsched" → Enter.
+2. Seleccionar "Reiniciar ahora y comprobar si hay problemas".
+3. El equipo reiniciará y ejecutará la prueba de memoria.
+4. Si encuentra errores en la RAM → uno o más módulos de RAM pueden estar dañados.
+
+SOLUCIÓN: RESTAURAR EL SISTEMA
+1. Escribir en el buscador de Windows "Crear un punto de restauración".
+2. Hacer clic en "Restaurar sistema".
+3. Seleccionar un punto de restauración anterior a cuando comenzaron los BSOD.
+4. Seguir el asistente y esperar que el sistema se restaure.
+
+=============================================================
+SECCIÓN 3: ERRORES AL INSTALAR PROGRAMAS
+=============================================================
+
+SÍNTOMAS:
+- La instalación se detiene con un código de error.
+- El instalador muestra "Error 1603", "Error 1722" u otros.
+- La instalación se completa pero el programa no aparece o no funciona.
+- El instalador dice que ya existe una versión instalada aunque no la hay.
+
+SOLUCIÓN: LIMPIAR INSTALACIONES PREVIAS INCOMPLETAS
+1. Ir a Configuración → Aplicaciones → buscar la app → Desinstalar.
+2. Después, usar la herramienta oficial "Microsoft Program Install and Uninstall Troubleshooter".
+3. Limpiar el registro de Windows con CCleaner o Revo Uninstaller (opcional, avanzado).
+4. Reiniciar y volver a intentar la instalación.
+
+SOLUCIÓN: INSTALAR CON PERMISOS COMPLETOS
+1. Descargar el instalador en una carpeta local (no en Descargas si tiene restricciones).
+2. Clic derecho en el instalador → Ejecutar como administrador.
+3. Si sigue fallando, temporalmente deshabilitar el antivirus durante la instalación.
+4. Asegurarse de tener espacio suficiente en disco (mínimo 2x el tamaño del instalador).
+
+SOLUCIÓN: INSTALAR DEPENDENCIAS REQUERIDAS
+1. Leer el mensaje de error para identificar qué falta (.NET, Visual C++, DirectX, etc.).
+2. Descargar e instalar las dependencias desde el sitio oficial de Microsoft.
+3. .NET Framework: buscar en Microsoft Download Center.
+4. Visual C++ Redistributable: descargar la versión x64 y x86 más reciente.
+5. DirectX: ejecutar en CMD: dxdiag (para diagnosticar) o descargar DirectX End-User Runtime.
+
+=============================================================
+SECCIÓN 4: PROBLEMAS CON IMPRESORAS
+=============================================================
+
+SÍNTOMAS:
+- La impresora no imprime aunque esté encendida y conectada.
+- Los trabajos de impresión quedan atascados en la cola.
+- Windows no detecta la impresora.
+- Error "Sin conexión" aunque la impresora esté encendida.
+
+SOLUCIÓN: LIMPIAR LA COLA DE IMPRESIÓN
+1. Abrir CMD como administrador.
+2. Ejecutar en orden:
+   net stop spooler
+   del /Q /F /S "%systemroot%\System32\spool\PRINTERS\*.*"
+   net start spooler
+3. Intentar imprimir nuevamente.
+
+SOLUCIÓN: REINSTALAR LA IMPRESORA
+1. Ir a Configuración → Bluetooth y dispositivos → Impresoras y escáneres.
+2. Seleccionar la impresora → Quitar.
+3. Agregar la impresora nuevamente con el botón "Agregar dispositivo".
+4. Si no aparece automáticamente, instalar los drivers desde el sitio web del fabricante.
+
+SOLUCIÓN: REINICIAR EL SERVICIO DE COLA DE IMPRESIÓN
+1. Presionar Windows + R → escribir "services.msc".
+2. Buscar "Cola de impresión" (Print Spooler).
+3. Clic derecho → Reiniciar.
+4. Verificar que el tipo de inicio esté en "Automático".
