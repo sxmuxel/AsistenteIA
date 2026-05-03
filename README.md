@@ -15,6 +15,30 @@ El sistema utiliza un **modelo de lenguaje ejecutado localmente** mediante Ollam
 
 ---
 
+## Arquitectura del Asistente
+
+El asistente funciona mediante ingeniería de prompts utilizando tres estrategias principales:
+
+**1. System Prompt**
+
+Define el comportamiento del modelo como un analista de soporte técnico.
+
+**2. Few-Shot Prompting**
+
+Se incluyen ejemplos de preguntas y respuestas para guiar al modelo hacia un formato estructurado.
+
+**3. Delimitadores**
+
+Se utilizan etiquetas XML para separar claramente la pregunta del usuario:
+
+<PREGUNTA_USUARIO>
+...
+</PREGUNTA_USUARIO>
+
+Esto permite al modelo identificar correctamente la entrada del usuario dentro del prompt.
+
+---
+
 ## Instrucciones de ejecución (Windows)
 
 ### Paso 1: Instalar Ollama
@@ -33,7 +57,7 @@ ollama pull phi3
 En la terminal:
 ```bash
 git clone https://github.com/sxmuxel/AsistenteIA.git
-cd Asistente IA
+cd AsistenteIA
 ```
 ### Paso 3: Crear entorno virtual
 
@@ -53,6 +77,8 @@ pip install -r requirements.txt
 ---
 
 ## Ejecución
+
+Asegúrese de que la aplicación Ollama esté ejecutándose en segundo plano antes de iniciar el asistente.
 
 Para iniciar el asistente ejecutar:
 
