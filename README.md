@@ -1,41 +1,60 @@
-# Analista de Soporte Técnico con IA Local
+# Analista de Soporte Técnico con IA Local mediante RAG
 
 ## Descripción del Proyecto
-Asistente de inteligencia artificial diseñado para actuar como un **analista de soporte técnico**, capaz de diagnosticar problemas comunes en computadoras y sugerir soluciones paso a paso.
+Asistente de inteligencia artificial diseñado para actuar como un **analista de soporte técnico**, capaz de diagnosticar problemas comunes en computadoras y sugerir soluciones paso a paso basándose en una base de conocimientos real.
 
-El sistema utiliza un **modelo de lenguaje ejecutado localmente** mediante Ollama, lo que permite realizar inferencias sin depender de servicios en la nube, garantizando privacidad de los datos y funcionamiento offline.
+El sistema implementa un flujo **RAG (Retrieval-Augmented Generation)** completamente local: los documentos técnicos se vectorizan y almacenan en una base de datos vectorial, y ante cada consulta del usuario se recuperan los fragmentos más relevantes antes de generar la respuesta con el LLM. Esto garantiza respuestas fundamentadas en información verificada, no en conocimiento genérico del modelo.
 
 ---
 
 ## Tecnologías Utilizadas
 
-- Python
-- Ollama (ejecución local de modelos LLM)
-- Modelo Phi-3
+| Componente | Herramienta | Propósito |
+|---|---|---|
+| LLM local | Ollama + phi3 | Generación de respuestas en lenguaje natural |
+| Embeddings | sentence-transformers (`all-MiniLM-L6-v2`) | Vectorización local de texto |
+| Base vectorial | ChromaDB | Almacenamiento y búsqueda por similitud |
+| Lenguaje | Python | Orquestación del pipeline |
 
 ---
 
-## Arquitectura del Asistente
+## Base de Conocimientos
+ 
+La base de conocimientos está compuesta por 4 manuales técnicos ubicados en `knowledge_base/`:
+ 
+| Archivo | Contenido |
+|---|---|
+| `manual_rendimiento.txt` | Diagnóstico de lentitud, disco al 100%, optimización de inicio |
+| `manual_redes.txt` | Problemas de Wi-Fi, Internet, Bluetooth, diagnóstico con ping/ipconfig |
+| `manual_software.txt` | Aplicaciones que no abren, BSOD, errores de instalación, impresoras |
+| `manual_hardware.txt` | Disco duro, RAM, temperatura, dispositivos USB |
+ 
+---
 
-El asistente funciona mediante ingeniería de prompts utilizando tres estrategias principales:
+# Arquitectura del Sistema RAG
 
-**1. System Prompt**
+## Fase de Ingesta (`ingest.py`)
 
-Define el comportamiento del modelo como un analista de soporte técnico.
+Proceso de preparación de la base de conocimientos:
 
-**2. Few-Shot Prompting**
+1. **Cargar documentos:** Lectura de archivos desde `knowledge_base/`.
+2. **Dividir en chunks:** Fragmentación del texto en bloques de 600 caracteres con un overlap de 100 caracteres.
+3. **Generar embeddings:** Conversión de los fragmentos mediante `sentence-transformers` (local).
+4. **Almacenar en ChromaDB:** Persistencia de los vectores en el directorio `chroma_db/`.
 
-Se incluyen ejemplos de preguntas y respuestas para guiar al modelo hacia un formato estructurado.
+## Fase de Consulta (`main.py`)
 
-**3. Delimitadores**
+Flujo de ejecución para responder preguntas del usuario:
 
-Se utilizan etiquetas XML para separar claramente la pregunta del usuario:
-
-<PREGUNTA_USUARIO>
-...
-</PREGUNTA_USUARIO>
-
-Esto permite al modelo identificar correctamente la entrada del usuario dentro del prompt.
+1. **Generar embedding de la pregunta:** Se utiliza el mismo modelo para vectorizar la consulta del usuario.
+2. **Búsqueda de similitud:** Localización de los **Top-4 chunks** más relevantes en ChromaDB.
+3. **Construcción del Prompt:** Se estructura el envío al modelo con los siguientes componentes:
+    * **System Prompt:** Define el comportamiento del asistente.
+    * **Few-Shot Examples:** Muestra el formato de salida esperado.
+    * **Contexto recuperado:** Chunks relevantes obtenidos de la base de datos.
+    * **Pregunta del usuario:** La consulta original.
+4. **Generación con LLM:** Uso de **phi3 (Ollama)** para generar la respuesta basada en el contexto.
+5. **Salida:** Entrega de la respuesta en formato **Markdown estructurado**.
 
 ---
 
@@ -67,11 +86,18 @@ python -m venv venv
 .\venv\Scripts\activate
 ```
 
-### Paso 4: Instalar dependencias
+### Paso 4: Instalar dependencias requeridas
 
 En la terminal:
 ```bash
 pip install -r requirements.txt
+```
+
+### Paso 5: Indexar la base de conocimientos (solo la primera vez)
+Este script carga los manuales, los divide en chunks, genera embeddings y los almacena en ChromaDB.
+ 
+```bash
+python ingest.py
 ```
 
 ---
@@ -101,9 +127,10 @@ salir
 Usuario:
 
 ```
-Mi computadora está muy lenta
+Mi pc me va muy lenta, tengo 6gb de RAM
 ```
 
 Asistente:
 
-<img width="1241" height="501" alt="Image" src="https://github.com/user-attachments/assets/71912080-ec40-4348-98cd-04155bea614b" />
+<img width="975" height="579" alt="image" src="https://github.com/user-attachments/assets/d65a8ac0-dc66-46e5-8cff-01ad5874333b" />
+
