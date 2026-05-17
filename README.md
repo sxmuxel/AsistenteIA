@@ -88,7 +88,7 @@ AsistenteIA/
    - Contexto recuperado
    - Pregunta del usuario
 
-5. El prompt es enviado a `gemini-3.5-flash-lite` 
+5. El prompt es enviado a `gemini-3.1-flash-lite` 
 
 6. Finalmente, la GUI muestra la respuesta generada y los chunks recuperados
 
