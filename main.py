@@ -3,15 +3,28 @@ import sys
 import chromadb
 from chromadb.config import Settings
 from sentence_transformers import SentenceTransformer
-import ollama
+import google.generativeai as genai
+from dotenv import load_dotenv
+
+load_dotenv()  # Carga las variables desde el archivo .env
 
 # ── Configuración
 
 CHROMA_DIR   = "chroma_db"
 COLLECTION   = "soporte_tecnico"
 EMBED_MODEL  = "all-MiniLM-L6-v2"
-LLM_MODEL    = "phi3"
-TOP_K        = 4      # Número de chunks a recuperar por consulta
+LLM_MODEL    = "gemini-1.5-flash"
+TOP_K        = 4
+
+# Configurar Gemini con la API key
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
+if not GEMINI_API_KEY:
+    print("[ERROR] GEMINI_API_KEY no encontrada.")
+    print("        Crea un archivo .env basándote en .env.example")
+    print("        y pega tu API Key de Gemini.")
+    sys.exit(1)
+
+genai.configure(api_key=GEMINI_API_KEY)
 
 # ── Inicialización de recursos
 
@@ -57,10 +70,8 @@ def retrieve_context(query: str, collection, model, top_k: int) -> tuple[str, li
         - context_text (str): texto concatenado de los chunks recuperados.
         - sources (list[str]): lista de fuentes (nombres de archivo).
     """
-    # Generar embedding de la consulta del usuario
     query_embedding = model.encode([query]).tolist()[0]
 
-    # Búsqueda de similitud en ChromaDB
     results = collection.query(
         query_embeddings=[query_embedding],
         n_results=top_k,
@@ -71,7 +82,6 @@ def retrieve_context(query: str, collection, model, top_k: int) -> tuple[str, li
     metadatas  = results["metadatas"][0]
     distances  = results["distances"][0]
 
-    # Mostrar información de retrieval en consola (modo debug)
     print("\n  [RAG] Chunks recuperados:")
     sources = []
     for i, (chunk, meta, dist) in enumerate(zip(chunks, metadatas, distances)):
@@ -80,9 +90,8 @@ def retrieve_context(query: str, collection, model, top_k: int) -> tuple[str, li
         similitud = round((1 - dist) * 100, 1)
         print(f"    {i+1}. {fuente} | Similitud: {similitud}% | {chunk[:60]}...")
 
-    # Construir el bloque de contexto para el prompt
     context_parts = []
-    for i, (chunk, meta) in enumerate(zip(chunks, metadatas)):
+    for chunk, meta in zip(chunks, metadatas):
         fuente = meta.get("source", "desconocido")
         context_parts.append(f"[Fuente: {fuente}]\n{chunk}")
 
@@ -111,38 +120,35 @@ def build_prompt(few_shot: str, context: str, question: str) -> str:
 
 
 def query_llm(system_prompt: str, user_prompt: str) -> str:
-    """Envía el prompt al LLM local a través de Ollama y retorna la respuesta."""
+    """Envía el prompt a Gemini y retorna la respuesta."""
     try:
-        response = ollama.chat(
-            model=LLM_MODEL,
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user",   "content": user_prompt}
-            ]
+        model = genai.GenerativeModel(
+            model_name=LLM_MODEL,
+            system_instruction=system_prompt
         )
-        return response["message"]["content"]
+        response = model.generate_content(user_prompt)
+        return response.text
     except Exception as e:
-        return f"[ERROR] No se pudo conectar con Ollama: {e}\nAsegúrate de que Ollama esté ejecutándose."
+        return f"[ERROR] No se pudo conectar con Gemini: {e}\nVerifica que tu GEMINI_API_KEY sea válida."
 
 
 # ── Interfaz de usuario
 
 def print_header():
     print("\n" + "=" * 60)
-    print("  ASISTENTE DE SOPORTE TÉCNICO WINDOWS  |  RAG + IA Local")
+    print("  ASISTENTE DE SOPORTE TÉCNICO WINDOWS  |  RAG Híbrido")
     print("  Base de conocimientos: Manuales técnicos Windows")
-    print("  Modelo LLM: phi3 (Ollama)  |  Embeddings: all-MiniLM-L6-v2")
+    print("  Modelo LLM: gemini-1.5-flash (Gemini API)")
+    print("  Embeddings: all-MiniLM-L6-v2 (local)")
     print("=" * 60)
     print("  Describe tu problema técnico y el asistente lo analizará.")
     print("  Escribe 'salir' para terminar.\n")
 
 
 def main():
-    # Cargar recursos estáticos
     system_prompt = load_text_file("prompts/system_prompt.txt")
     few_shot      = load_text_file("examples/few_shot_examples.txt")
 
-    # Inicializar componentes RAG
     print("[→] Inicializando base de datos vectorial y modelo de embeddings...")
     collection, embed_model = initialize_retriever()
     print("[✓] Sistema RAG listo.\n")
@@ -164,17 +170,12 @@ def main():
             break
 
         # ── Pipeline RAG
-        # Paso 1: Recuperar contexto relevante de ChromaDB
         context, sources = retrieve_context(pregunta, collection, embed_model, TOP_K)
+        prompt_usuario   = build_prompt(few_shot, context, pregunta)
 
-        # Paso 2: Construir el prompt enriquecido con el contexto
-        prompt_usuario = build_prompt(few_shot, context, pregunta)
-
-        # Paso 3: Generar respuesta con el LLM
-        print("\n  [→] Generando respuesta con el LLM...\n")
+        print("\n  [→] Generando respuesta con Gemini...\n")
         respuesta = query_llm(system_prompt, prompt_usuario)
 
-        # Paso 4: Mostrar respuesta
         print("\nAsistente:\n")
         print(respuesta)
         print("\n" + "-" * 60 + "\n")
