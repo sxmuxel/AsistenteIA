@@ -12,7 +12,7 @@ El sistema implementa un flujo **RAG (Retrieval-Augmented Generation)** híbrido
 
 | Componente | Herramienta | Propósito |
 |---|---|---|
-| **LLM** | Google Gemini 3.1 Flash Lite (API) | Generación de respuestas en lenguaje natural |
+| **LLM** | `gemini-3.1-flash-lite` | Generación de respuestas en lenguaje natural |
 | **Embeddings** | sentence-transformers `all-MiniLM-L6-v2` | Vectorización local de texto |
 | **Base vectorial** | ChromaDB (persistente) | Almacenamiento y búsqueda por similitud coseno |
 | **Interfaz gráfica** | Streamlit | GUI web interactiva con historial de chat |
