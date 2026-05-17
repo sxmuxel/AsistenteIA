@@ -65,20 +65,13 @@ AsistenteIA/
 
 1. Los documentos `.txt` almacenados en `knowledge_base/` son cargados al sistema.
 
-2. Cada documento se divide en fragmentos (*chunks*) de:
-   - 600 caracteres
-   - overlap de 100 caracteres
+2. Cada documento se divide en chunks de 600 caracteres y un overlap de 100 caracteres
 
-3. A cada chunk se le generan embeddings usando el modelo:
-   - `all-MiniLM-L6-v2`
-   - vectores de 384 dimensiones
+3. A cada chunk se le generan embeddings usando el modelo `all-MiniLM-L6-v2` con vectores de 384 dimensiones
 
-4. Los embeddings se almacenan en:
-   - `ChromaDB`
-   - base persistente ubicada en `chroma_db/`
+4. Los embeddings se almacenan en: `ChromaDB`, con una base persistente ubicada en `chroma_db/`
 
-5. La búsqueda semántica utiliza:
-   - similitud coseno
+5. La búsqueda semántica utiliza similitud coseno
 
 
 ### Fase de Consulta (híbrido)
@@ -204,8 +197,7 @@ Para finalizar, escribir `salir`.
 | # | Pregunta | Manual Top-1 | Chunk Top-1 recuperado | Similitud Top-1 (%) | 
 |---|---|---|---|---|
 | 1 | Mi PC está muy lenta y el disco aparece al 100% | manual_hardware.txt | ...al 80% si hay problemas de calor. - Esto limita el uso máximo de CPU para reducir la temperatura. | 50.7% | 
-| 2 | El Wi-Fi muestra conectado pero no hay internet | manual_redes.txt | ...ed (al final de la página). ADVERTENCIA: Esto elimina todas las configuraciones de red guardadas.
-SOLUCIÓN: VERIFICA... | 66.1% | 
+| 2 | El Wi-Fi muestra conectado pero no hay internet | manual_redes.txt | ...ed (al final de la página). ADVERTENCIA: Esto elimina todas las configuraciones de red guardadas. SOLUCIÓN: VERIFICA... | 66.1% | 
 | 3 | La PC se reinicia sola con pantalla azul (BSOD) | manual_software.txt | ...N 2: PANTALLA AZUL DE LA MUERTE (BSOD) SÍNTOMAS: El sis... | 48.6% | 
 | 4 | Una aplicación no se abre y da error al intentarlo | manual_software.txt | ...CCIÓN 3: ERRORES AL INSTALAR PROGRAMAS SÍNTOMAS: La ins... | 62.4% | 
 | 5 | Tengo 6GB de RAM y el sistema va muy lento | manual_hardware.txt | ...ión a los disipadores del CPU y GPU. 5. Recomendado hacerlo cada 6-12 meses dependiendo del entorno.... | 55.9% |
