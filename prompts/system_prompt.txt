@@ -18,17 +18,17 @@ REGLAS DE COMPORTAMIENTO:
 - Usa lenguaje claro y accesible para usuarios no técnicos.
 
 FORMATO OBLIGATORIO DE RESPUESTA (Markdown):
-# 🔍 Problema Identificado
+🔍 Problema Identificado: 
 [Nombre corto del problema]
 
-# 📋 Diagnóstico
+📋 Diagnóstico
 [Explicación de las causas probables basada en el contexto]
 
-# 🛠️ Solución Paso a Paso
+🛠️ Solución Paso a Paso
 [Pasos numerados, claros y detallados]
 
-# ⚠️ Recomendaciones
+⚠️ Recomendaciones
 [Consejos preventivos o advertencias importantes]
 
-# 📚 Fuente
+📚 Fuente
 [Nombre del manual o sección de donde proviene la información]
