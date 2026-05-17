@@ -1,4 +1,4 @@
-# 🖥️ Asistente de Soporte Técnico con IA Híbrida mediante RAG
+# Asistente de Soporte Técnico con IA Híbrida mediante RAG
 
 ## Descripción del Proyecto
 
@@ -61,34 +61,43 @@ AsistenteIA/
 
 ## Arquitectura del Sistema RAG
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│              FASE DE INGESTA (100% local)                   │
-│                                                             │
-│  knowledge_base/*.txt  →  Chunks (600 chars, overlap 100)  │
-│         ↓                                                   │
-│  all-MiniLM-L6-v2  →  Embeddings (384 dimensiones)        │
-│         ↓                                                   │
-│  ChromaDB (similitud coseno, persistente en chroma_db/)    │
-└─────────────────────────────────────────────────────────────┘
+### Fase de Ingesta (local)
 
-┌─────────────────────────────────────────────────────────────┐
-│              FASE DE CONSULTA (híbrido)                     │
-│                                                             │
-│  Usuario (GUI Streamlit)                                    │
-│         ↓                                                   │
-│  Embedding de la pregunta  →  all-MiniLM-L6-v2  [LOCAL]   │
-│         ↓                                                   │
-│  Búsqueda similitud coseno  →  Top-4 chunks  [LOCAL]       │
-│         ↓                                                   │
-│  Construcción del prompt aumentado:              [LOCAL]    │
-│    [System Prompt] + [Few-Shot] + [Contexto] + [Pregunta]  │
-│         ↓                                                   │
-│  Gemini 2.5 Flash Lite (Google API) → Respuesta [NUBE ☁️]  │
-│         ↓                                                   │
-│  GUI: muestra respuesta + fuentes consultadas   [LOCAL]    │
-└─────────────────────────────────────────────────────────────┘
-```
+1. Los documentos `.txt` almacenados en `knowledge_base/` son cargados al sistema.
+
+2. Cada documento se divide en fragmentos (*chunks*) de:
+   - 600 caracteres
+   - overlap de 100 caracteres
+
+3. A cada chunk se le generan embeddings usando el modelo:
+   - `all-MiniLM-L6-v2`
+   - vectores de 384 dimensiones
+
+4. Los embeddings se almacenan en:
+   - `ChromaDB`
+   - base persistente ubicada en `chroma_db/`
+
+5. La búsqueda semántica utiliza:
+   - similitud coseno
+
+
+### Fase de Consulta (híbrido)
+
+1. El usuario realiza una pregunta desde la interfaz realizada con Streamlit
+
+2. La pregunta del usuario se convierte en embedding usando `all-MiniLM-L6-v2` 
+
+3. Se realiza una búsqueda semántica en ChromaDB por similitud coseno y realiza la recuperación de los Top-4 chunks más relevantes
+
+4. El sistema construye un prompt aumentado con:
+   - System Prompt
+   - Few-Shot Examples
+   - Contexto recuperado
+   - Pregunta del usuario
+
+5. El prompt es enviado a `gemini-3.5-flash-lite` 
+
+6. Finalmente, la GUI muestra la respuesta generada y los chunks recuperados
 
 ---
 
@@ -106,11 +115,7 @@ CHUNK_OVERLAP = 100
 ```
 
 ### 3. Generación de Embeddings
-Se utiliza el modelo `all-MiniLM-L6-v2` de sentence-transformers para convertir cada chunk en un vector de **384 dimensiones**. Este modelo fue elegido por:
-- Ejecución completamente local (sin API externa)
-- Alto rendimiento en tareas de recuperación semántica en inglés y español
-- Velocidad de inferencia apropiada para hardware de consumo
-- Tamaño compacto (~90MB)
+Se utiliza el modelo `all-MiniLM-L6-v2` de sentence-transformers para convertir cada chunk en un vector de **384 dimensiones**.
 
 ### 4. Almacenamiento en ChromaDB
 Los vectores se almacenan en una colección ChromaDB configurada con **similitud coseno** (`hnsw:space: cosine`). El almacenamiento es persistente en el directorio `chroma_db/`.
@@ -142,19 +147,6 @@ La consulta original del usuario sin modificar.
 
 El System Prompt incluye una instrucción crítica: si el contexto no contiene información suficiente, el modelo debe responder `"No encuentro esa información en la base de conocimientos técnicos"` en lugar de generar contenido inventado.
 
----
-
-## Interfaz Gráfica (Streamlit)
-
-La GUI se construyó con **Streamlit** e incluye:
-
-- **Chat interactivo** con historial de conversación persistente durante la sesión
-- **Burbujas diferenciadas** para mensajes de usuario y del asistente
-- **Panel de fuentes RAG** (expandible) que muestra qué manuales se consultaron para cada respuesta
-- **Modo debug** (toggle en sidebar) que muestra el porcentaje de similitud coseno de cada chunk recuperado
-- **Contador de consultas** realizadas en la sesión
-- **Información del sistema** en el sidebar (modelo LLM, embeddings, Top-K configurado)
-- **Botón para limpiar** la conversación
 
 ---
 
@@ -185,7 +177,6 @@ Copia el archivo de ejemplo y pega tu clave dentro:
 ```bash
 copy .env.example .env
 ```
-Abre `.env` y reemplaza `tu_clave_aqui` con tu API Key real.
 
 ### Paso 6: Indexar la base de conocimientos *(solo la primera vez)*
 ```bash
@@ -208,9 +199,38 @@ Para finalizar, escribir `salir`.
 
 ## Informe de Evaluación — 10 Preguntas de Prueba
 
-Las siguientes pruebas evalúan dos métricas:
-- **Fidelidad**: la respuesta está basada en el contexto recuperado, no inventada.
-- **Relevancia**: la respuesta resuelve correctamente la pregunta del usuario.
-
-El porcentaje de similitud y el chunk recuperado se obtienen activando el **modo debug** en el sidebar de la GUI.
-
+### Preguntas dentro del dominio (deben responder correctamente)
+ 
+| # | Pregunta | Manual Top-1 | Chunk Top-1 recuperado | Similitud Top-1 (%) | 
+|---|---|---|---|---|
+| 1 | Mi PC está muy lenta y el disco aparece al 100% | manual_hardware.txt | ...al 80% si hay problemas de calor. - Esto limita el uso máximo de CPU para reducir la temperatura. | 50.7% | 
+| 2 | El Wi-Fi muestra conectado pero no hay internet | manual_redes.txt | ...ed (al final de la página). ADVERTENCIA: Esto elimina todas las configuraciones de red guardadas.
+SOLUCIÓN: VERIFICA... | 66.1% | 
+| 3 | La PC se reinicia sola con pantalla azul (BSOD) | manual_software.txt | ...N 2: PANTALLA AZUL DE LA MUERTE (BSOD) SÍNTOMAS: El sis... | 48.6% | 
+| 4 | Una aplicación no se abre y da error al intentarlo | manual_software.txt | ...CCIÓN 3: ERRORES AL INSTALAR PROGRAMAS SÍNTOMAS: La ins... | 62.4% | 
+| 5 | Tengo 6GB de RAM y el sistema va muy lento | manual_hardware.txt | ...ión a los disipadores del CPU y GPU. 5. Recomendado hacerlo cada 6-12 meses dependiendo del entorno.... | 55.9% |
+| 6 | El USB no es reconocido por Windows | manual_hardware.txt | ...tivo aparece brevemente y luego desaparece. - La unidad USB no aparece en el explorador de archivos. SOLUCIÓN: REPARAR ... | 69.3% |
+| 7 | La impresora está conectada pero no imprime | manual_hardware.txt | ...- Asignar una letra de unidad disponible.... | 57.7% |
+ 
+### Preguntas fuera del dominio (deben rechazar sin alucinar)
+ 
+| # | Pregunta | Chunk Top-1 recuperado | Similitud Top-1 | Rechazó correctamente |
+|---|---|---|---|---|
+| 8 | El equipo se sobrecalienta y se apaga solo | ...CIONES QUE NO ABREN O SE CIERRAN SOLAS | 50.0% | ✅ |
+| 9 | ¿Cómo instalo Ubuntu en dual boot con Windows? | ...CAUSAS MÁS FRECUENTES: 1. Exceso de programas al inicio de Windows (startup). 2. Uso elevado de CPU o RAM por procesos e... | 46.1% | ✅ |
+| 10 | ¿Cuál es la mejor GPU para gaming en 2026? | 67.7% | ...ión a los disipadores del CPU y GPU. 5. Recomendado hacerlo cada 6-12 meses dependiendo del entorno.... | ✅ |
+ 
+### Resumen de Resultados
+ 
+| Métrica | Valor |
+|---|---|
+| **Total de pruebas** | 10 |
+| **Respuestas correctas** | 10 |
+| **Alucinaciones detectadas** | 0 |
+| **Rechazos correctos** (fuera del dominio) | 3/3 |
+ 
+### Caso de Éxito Destacado
+La consulta #2 fue la que mas fidelidad presentó en la lista de preguntas dentro del dominio, con un 69.3% de precisión respecto al Chunk Top-1.
+ 
+### Caso de Error / Rechazo Analizado
+La consulta sobre instalación de Ubuntu en dual boot recuperó chunks vagamente relacionados con gestión de disco y software de Windows, pero con similitudes bajas. El modelo reconoció que el contexto era insuficiente y devolvió el mensaje de rechazo en lugar de inventar un procedimiento de instalación — demostrando que el System Prompt anti-alucinación funciona correctamente.
