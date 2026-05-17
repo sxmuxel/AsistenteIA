@@ -210,7 +210,7 @@ Para finalizar, escribir `salir`.
 |---|---|---|---|---|
 | 8 | El equipo se sobrecalienta y se apaga solo | ...CIONES QUE NO ABREN O SE CIERRAN SOLAS | 50.0% | ✅ |
 | 9 | ¿Cómo instalo Ubuntu en dual boot con Windows? | ...CAUSAS MÁS FRECUENTES: 1. Exceso de programas al inicio de Windows (startup). 2. Uso elevado de CPU o RAM por procesos e... | 46.1% | ✅ |
-| 10 | ¿Cuál es la mejor GPU para gaming en 2026? | 67.7% | ...ión a los disipadores del CPU y GPU. 5. Recomendado hacerlo cada 6-12 meses dependiendo del entorno.... | ✅ |
+| 10 | ¿Cuál es la mejor GPU para gaming en 2026? | ...ión a los disipadores del CPU y GPU. 5. Recomendado hacerlo cada 6-12 meses dependiendo del entorno.... | 67.7% | ✅ |
  
 ### Resumen de Resultados
  
